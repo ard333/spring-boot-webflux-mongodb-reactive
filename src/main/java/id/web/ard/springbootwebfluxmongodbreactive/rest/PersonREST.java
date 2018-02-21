@@ -27,12 +27,17 @@ public class PersonREST {
 	@Autowired
 	private PersonRepository personRepository;
 	
-	@GetMapping(value = "/person", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+	@GetMapping(value = "/person")
 	public Flux<Person> getAllPerson() {
 		return personRepository.findAll();
 	}
 	
-	@PostMapping(value = "/person", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+	@GetMapping(value = "/person/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+	public Flux<Person> streamAllPerson() {
+		return personRepository.findAll();
+	}
+	
+	@PostMapping(value = "/person")
 	public Mono<ResponseEntity<Person>> createPerson(@Valid @RequestBody Person personInput) {
 		return personRepository.save(personInput).map(person -> {
 			return ResponseEntity.ok(person);
@@ -41,7 +46,7 @@ public class PersonREST {
 		);
 	}
 
-	@GetMapping(value = "/person/{id}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+	@GetMapping(value = "/person/{id}")
 	public Mono<ResponseEntity<Person>> getPersonById(@PathVariable(value = "id") String id) {
 		return personRepository.findById(id).map(person -> {
 			return ResponseEntity.ok(person);
@@ -50,7 +55,7 @@ public class PersonREST {
 		);
 	}
 
-	@PutMapping(value = "/person/{id}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+	@PutMapping(value = "/person/{id}")
 	public Mono<ResponseEntity<Person>> updatePerson(@PathVariable(value = "id") String id, @Valid @RequestBody Person personInput) {
 		return personRepository.findById(id).flatMap(person -> {
 			person.setName(personInput.getName());
